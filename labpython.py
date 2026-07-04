@@ -3,41 +3,65 @@ puntos = []
 goles_favor = []
 numequipos = 0
 
+print("Este es el archivo nuevo")
+
 
 def fixture_partidos(lista_equipos, numequipos):
-    posicion = 0
-    posicion1 = 1
+    equipos_rotacion = list(lista_equipos)
+    num_fechas = numequipos - 1
+    part_por_fecha = numequipos // 2
     numP = 1
-    print("El fixture es")
-    while True:
-        print()
-        print("partido", numP)
-        print(lista_equipos[posicion], "vs", lista_equipos[posicion1])
-        print()
-        goles_local = int(input(f"Goles de {lista_equipos[posicion]}: "))
-        goles_visitante = int(input(f"Goles de {lista_equipos[posicion1]}: "))
-        if goles_local > goles_visitante:
-            puntos[posicion] += 3
-        elif goles_local < goles_visitante:
-            puntos[posicion1] += 3
-        else:
-            puntos[posicion] += 1
-            puntos[posicion1] += 1
-        goles_favor[posicion] += goles_local
-        goles_favor[posicion1] += goles_visitante
-        posicion = posicion + 2
-        posicion1 = posicion1 + 2
-        numP = numP + 1
-        if numP == numequipos/2 + 1:
-            break
+    for fecha in range(num_fechas):
+        print(f"\n--- Fecha {fecha + 1} ---")
+        for i in range(part_por_fecha):
+            local = equipos_rotacion[i]
+            visitante = equipos_rotacion[numequipos - 1 - i]
+            idx_local = lista_equipos.index(local)
+            idx_visitante = lista_equipos.index(visitante)
+            print(f"Partido {numP}: {local} vs {visitante}")
+            goles_local = int(input(f"Goles de {local}: "))
+            goles_visitante = int(input(f"Goles de {visitante}: "))
+            if goles_local > goles_visitante:
+                puntos[idx_local] += 3
+            elif goles_local < goles_visitante:
+                puntos[idx_visitante] += 3
+            else:
+                puntos[idx_local] += 1
+                puntos[idx_visitante] += 1
+            goles_favor[idx_local] += goles_local
+            goles_favor[idx_visitante] += goles_visitante
+            numP += 1
+            print()
+        ultimo = equipos_rotacion.pop()
+        equipos_rotacion.insert(1, ultimo)
 
 def mostrar_tabla(lista_equipos, puntos, goles_favor):
     print("\n-------------------------------------------")
-    print("EQUIPO\t\t\tPUNTOS\t\tGOLES")
+    print(f"| {'EQUIPO':<15} | {'PUNTOS':>6} | {'GOLES':>6} |")
     print("-------------------------------------------")
     for i in range(len(lista_equipos)):
-        print(f"{lista_equipos[i]}\t\t{puntos[i]}\t\t{goles_favor[i]}")
+        print(f"| {lista_equipos[i]:<15} | {puntos[i]:>6} | {goles_favor[i]:>6} |")
     print("-------------------------------------------\n")
+
+
+def mostrar_campeon(lista_equipos, puntos, goles_favor):
+    idx_camp = 0
+    max_puntos = puntos[0]
+    max_goles = goles_favor[0]
+    for i in range(1, len(lista_equipos)):
+        if puntos[i] > max_puntos:
+            max_puntos = puntos[i]
+            max_goles = goles_favor[i]
+            idx_camp = i
+        elif puntos[i] == max_puntos and goles_favor[i] > max_goles:
+            max_goles = goles_favor[i]
+            idx_camp = i
+    campeon = lista_equipos[idx_camp]
+    print("\n=========================================================")
+    print(f" ¡EL CAMPEÓN DEL TORNEO ES: {campeon.upper()}! ")
+    print(f" Estadísticas finales: {max_puntos} Puntos | {max_goles} Goles a Favor")
+    print("=========================================================\n")
+
 
 ejecutando_menu = True
 while ejecutando_menu:
@@ -79,6 +103,8 @@ while ejecutando_menu:
         else:
             print("--- Tabla de Posiciones ---")
             mostrar_tabla(lista_equipos, puntos, goles_favor)
+            print("--- Campeón del Torneo ---")
+            mostrar_campeon(lista_equipos, puntos, goles_favor)   
     elif opcion == "4":
         print("Saliendo del programa...")
         ejecutando_menu = False
