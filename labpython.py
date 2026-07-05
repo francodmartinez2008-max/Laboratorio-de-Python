@@ -3,8 +3,6 @@ puntos = []
 goles_favor = []
 numequipos = 0
 
-print("Este es el archivo nuevo")
-
 
 def fixture_partidos(lista_equipos, numequipos):
     equipos_rotacion = list(lista_equipos)
@@ -35,12 +33,21 @@ def fixture_partidos(lista_equipos, numequipos):
         ultimo = equipos_rotacion.pop()
         equipos_rotacion.insert(1, ultimo)
 
+
 def mostrar_tabla(lista_equipos, puntos, goles_favor):
+    n = len(lista_equipos)
+    posiciones = list(range(n))
+    for i in range(n-1):
+        for j in range(i+1, n):
+            if puntos[posiciones[j]] > puntos[posiciones[i]] or (puntos[posiciones[j]] == puntos[posiciones[i]] and goles_favor[posiciones[j]] > goles_favor[posiciones[i]]):
+                resg = posiciones[i]
+                posiciones[i] = posiciones[j]
+                posiciones[j] = resg
     print("\n-------------------------------------------")
     print(f"| {'EQUIPO':<15} | {'PUNTOS':>6} | {'GOLES':>6} |")
     print("-------------------------------------------")
-    for i in range(len(lista_equipos)):
-        print(f"| {lista_equipos[i]:<15} | {puntos[i]:>6} | {goles_favor[i]:>6} |")
+    for p in posiciones:
+        print(f"| {lista_equipos[p]:<15} | {puntos[p]:>6} | {goles_favor[p]:>6} |")
     print("-------------------------------------------\n")
 
 
@@ -104,7 +111,7 @@ while ejecutando_menu:
             print("--- Tabla de Posiciones ---")
             mostrar_tabla(lista_equipos, puntos, goles_favor)
             print("--- Campeón del Torneo ---")
-            mostrar_campeon(lista_equipos, puntos, goles_favor)   
+            mostrar_campeon(lista_equipos, puntos, goles_favor)
     elif opcion == "4":
         print("Saliendo del programa...")
         ejecutando_menu = False
