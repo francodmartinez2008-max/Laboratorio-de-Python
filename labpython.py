@@ -1,3 +1,4 @@
+# Listas que almacenan datos de los equipos del torneo
 lista_equipos = []
 puntos = []
 goles_favor = []
@@ -5,6 +6,7 @@ numequipos = 0
 
 
 def fixture_partidos(lista_equipos, numequipos):
+    # Se crea una copia para poder rotar los equipos sin modificar la lista original
     equipos_rotacion = list(lista_equipos)
     num_fechas = numequipos - 1
     part_por_fecha = numequipos // 2
@@ -19,6 +21,7 @@ def fixture_partidos(lista_equipos, numequipos):
             print(f"Partido {numP}: {local} vs {visitante}")
             goles_local = int(input(f"Goles de {local}: "))
             goles_visitante = int(input(f"Goles de {visitante}: "))
+            # Asignación de puntos según el resultado del partido
             if goles_local > goles_visitante:
                 puntos[idx_local] += 3
             elif goles_local < goles_visitante:
@@ -26,20 +29,31 @@ def fixture_partidos(lista_equipos, numequipos):
             else:
                 puntos[idx_local] += 1
                 puntos[idx_visitante] += 1
+            # Acumulación de goles convertidos por cada equipo
             goles_favor[idx_local] += goles_local
             goles_favor[idx_visitante] += goles_visitante
             numP += 1
             print()
+        # Rotación de equipos para generar los cruces de la siguiente fecha
         ultimo = equipos_rotacion.pop()
         equipos_rotacion.insert(1, ultimo)
 
 
 def mostrar_tabla(lista_equipos, puntos, goles_favor):
     n = len(lista_equipos)
+    # Se crea una lista de índices para ordenar sin modificar la lista original de equipos
     posiciones = list(range(n))
+    # Ordenamiento de la tabla según puntos y goles a favor
     for i in range(n-1):
         for j in range(i+1, n):
-            if puntos[posiciones[j]] > puntos[posiciones[i]] or (puntos[posiciones[j]] == puntos[posiciones[i]] and goles_favor[posiciones[j]] > goles_favor[posiciones[i]]):
+            if puntos[posiciones[j]] > puntos[posiciones[i]]:
+                intercambio = True
+            elif puntos[posiciones[j]] == puntos[posiciones[i]] and goles_favor[posiciones[j]] > goles_favor[posiciones[i]]:
+                intercambio = True
+            else:
+                intercambio = False
+            if intercambio:
+                # Intercambia las posiciones de los equipos para mantener la tabla ordenada
                 resg = posiciones[i]
                 posiciones[i] = posiciones[j]
                 posiciones[j] = resg
@@ -61,6 +75,7 @@ def mostrar_campeon(lista_equipos, puntos, goles_favor):
             max_goles = goles_favor[i]
             idx_camp = i
         elif puntos[i] == max_puntos and goles_favor[i] > max_goles:
+            # Si empatan en puntos, se desempata por goles a favor
             max_goles = goles_favor[i]
             idx_camp = i
     campeon = lista_equipos[idx_camp]
@@ -71,6 +86,7 @@ def mostrar_campeon(lista_equipos, puntos, goles_favor):
 
 
 ejecutando_menu = True
+# Menú principal del programa
 while ejecutando_menu:
     print("--- MENU PRINCIPAL - LIGA DE FÚTBOL ---")
     print("1. Registrar Equipos")
@@ -80,6 +96,7 @@ while ejecutando_menu:
     opcion = input("Seleccione una opción (1-4): ")
     if opcion == "1":
         entrada_valida = False
+        # Se valida que el usuario ingrese una cantidad par de equipos entre 2 y 20
         while not entrada_valida:
             print("Ingrese un numero par de equipos (entre 2 y 20):")
             entrada_usuario = input()
@@ -94,6 +111,7 @@ while ejecutando_menu:
         lista_equipos.clear()
         puntos = [0] * numequipos
         goles_favor = [0] * numequipos
+        # Se registran los nombres de todos los equipos participantes
         for i in range(numequipos):
             print("equipo", i + 1)
             lista_equipos.append(input("Escriba el nombre: "))
